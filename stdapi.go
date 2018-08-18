@@ -3,15 +3,15 @@
 // similarity is intentional and credit is due to the Go authors for their
 // work.
 //
-// This package may server as a drop-in replacement for the standard path
+// This package may serve as a drop-in replacement for the standard path
 // package. In addition to the functions available in the standard path
 // package, there are extra functions for dividing paths.
 //
 // There is also a type Path. This allows path strings to be manipulated
 // using methods instead of helper functions. These methods follow a similar
-// design, and also allow iteration through path segments etc.
+// design, and also allow iteration through path segments.
 //
-// The path package should only be used for paths separated by forward
+// This package should only be used for paths separated by forward
 // slashes, such as the paths in URLs.
 package path
 
