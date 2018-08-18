@@ -123,9 +123,19 @@ func (p Path) IsEmpty() bool {
 	return len(p) == 0
 }
 
-// Segments returns the path split into the parts between slashes. Notice that,
-// whenever the path is absolute, the first segment is a blank string.
+// Segments returns the path split into the parts between slashes. Any leading or
+// trailing slash on the path is removed before the path is split, so there is no
+// leading or trailing blank string in the result.
 func (p Path) Segments() []string {
+	if p == "/" {
+		return nil
+	}
+	if strings.HasPrefix(string(p), "/") {
+		p = p[1:]
+	}
+	if strings.HasSuffix(string(p), "/") {
+		p = p[:len(p)-1]
+	}
 	return strings.Split(string(p), "/")
 }
 

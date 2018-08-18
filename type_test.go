@@ -5,6 +5,12 @@ import "testing"
 func TestPathClean(t *testing.T) {
 	a := Path("/a/b/..").Clean()
 	isEqual(t, a, Path("/a"), "")
+
+	b := Path("/a//./b/..").Clean()
+	isEqual(t, b, Path("/a"), "")
+
+	c := Path("///").Clean()
+	isEqual(t, c, Path("/"), "")
 }
 
 func TestPathSplit(t *testing.T) {
@@ -69,10 +75,16 @@ func TestPathIsEmpty(t *testing.T) {
 
 func TestPathSegments(t *testing.T) {
 	a := Path("/a/b/c/zz.png").Segments()
-	isEqual(t, a, []string{"", "a", "b", "c", "zz.png"}, "")
+	isEqual(t, a, []string{"a", "b", "c", "zz.png"}, "")
 
 	b := Path("a/b/c/zz.png").Segments()
 	isEqual(t, b, []string{"a", "b", "c", "zz.png"}, "")
+
+	c := Path("/a/b/c/").Segments()
+	isEqual(t, c, []string{"a", "b", "c"}, "")
+
+	d := Path("/").Segments()
+	isEqual(t, d, []string(nil), "")
 }
 
 func TestPathString(t *testing.T) {
