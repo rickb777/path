@@ -10,6 +10,8 @@ func TestDivideAndDropLeading(t *testing.T) {
 		n                 int
 		input, head, tail string
 	}{
+		{0, "", "", ""},
+
 		{0, "a/b/c/x.png", "", "a/b/c/x.png"},
 		{1, "a/b/c/x.png", "a", "/b/c/x.png"},
 		{2, "a/b/c/x.png", "a/b", "/c/x.png"},

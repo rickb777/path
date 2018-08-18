@@ -2,7 +2,11 @@ package path
 
 import (
 	std "path"
+	"strings"
 )
+
+// Path is just a string with specialised methods.
+type Path string
 
 // Clean returns the shortest path name equivalent to path
 // by purely lexical processing. It applies the following rules
@@ -23,8 +27,8 @@ import (
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func Clean(path string) string {
-	return std.Clean(path)
+func (p Path) Clean() Path {
+	return Path(std.Clean(string(p)))
 }
 
 // Split splits path immediately following the final slash,
@@ -32,36 +36,40 @@ func Clean(path string) string {
 // If there is no slash in path, Split returns an empty dir and
 // file set to path.
 // The returned values have the property that path = dir+file.
-func Split(path string) (dir, file string) {
-	return std.Split(path)
+func (p Path) Split() (dir Path, file string) {
+	d, f := std.Split(string(p))
+	return Path(d), f
 }
 
-// Join joins any number of path elements into a single path, adding a
+// Append joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func Join(elem ...string) string {
-	return std.Join(elem...)
+func (p Path) Append(elem ...string) Path {
+	if !strings.HasSuffix(string(p), "/") {
+		p = p + "/"
+	}
+	return p + Path(std.Join(elem...))
 }
 
 // Ext returns the file name extension used by path.
 // The extension is the suffix beginning at the final dot
 // in the final slash-separated element of path;
 // it is empty if there is no dot.
-func Ext(path string) string {
-	return std.Ext(path)
+func (p Path) Ext() string {
+	return std.Ext(string(p))
 }
 
 // Base returns the last element of path.
 // Trailing slashes are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of slashes, Base returns "/".
-func Base(path string) string {
-	return std.Base(path)
+func (p Path) Base() string {
+	return std.Base(string(p))
 }
 
 // IsAbs reports whether the path is absolute.
-func IsAbs(path string) bool {
-	return std.IsAbs(path)
+func (p Path) IsAbs() bool {
+	return std.IsAbs(string(p))
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -71,36 +79,58 @@ func IsAbs(path string) bool {
 // If the path consists entirely of slashes followed by non-slash bytes, Dir
 // returns a single slash. In any other case, the returned path does not end in a
 // slash.
-func Dir(path string) string {
-	return std.Dir(path)
+func (p Path) Dir() Path {
+	return Path(std.Dir(string(p)))
 }
 
-// Match reports whether name matches the shell file name pattern.
-// The pattern syntax is:
+// Divide divides a path at the nth slash, not counting the leading slash
+// if there is one.
 //
-//	pattern:
-//		{ term }
-//	term:
-//		'*'         matches any sequence of non-/ characters
-//		'?'         matches any single non-/ character
-//		'[' [ '^' ] { character-range } ']'
-//		            character class (must be non-empty)
-//		c           matches character c (c != '*', '?', '\\', '[')
-//		'\\' c      matches character c
+// The resulting pair (head, tail) always satisfy
 //
-//	character-range:
-//		c           matches character c (c != '\\', '-', ']')
-//		'\\' c      matches character c
-//		lo '-' hi   matches character c for lo <= c <= hi
-//
-// Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
-// is malformed.
-//
-func Match(pattern, name string) (matched bool, err error) {
-	return std.Match(pattern, name)
+//   head + tail = path
+func (p Path) Divide(nth int) (Path, Path) {
+	head, tail := Divide(string(p), nth)
+	return Path(head), Path(tail)
 }
 
-// ErrBadPattern indicates a globbing pattern was malformed.
-var ErrBadPattern = std.ErrBadPattern
+// Drop is a helper for Divide that returns the tail part only.
+func (p Path) Drop(unwanted int) Path {
+	_, tail := p.Divide(unwanted)
+	return tail
+}
+
+// Take is a helper for Divide that returns the head part only.
+func (p Path) Take(wanted int) Path {
+	head, _ := p.Divide(wanted)
+	return head
+}
+
+// Next returns the first segment (without any leading '/') and the rest. It can
+// be used for iterating through the path segments; the end has been reached when
+// the tail is empty (see IsEmpty).
+func (p Path) Next() (string, Path) {
+	head, tail := p.Divide(1)
+	next := string(head)
+	if strings.HasPrefix(next, "/") {
+		next = next[1:]
+	}
+	return next, tail
+}
+
+// IsEmpty returns true if the path is empty.
+func (p Path) IsEmpty() bool {
+	return len(p) == 0
+}
+
+// Segments returns the path split into the parts between slashes. Notice that,
+// whenever the path is absolute, the first segment is a blank string.
+func (p Path) Segments() []string {
+	return strings.Split(string(p), "/")
+}
+
+// String simply converts the type to a string.
+func (p Path) String() string {
+	return string(p)
+}
 

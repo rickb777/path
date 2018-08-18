@@ -9,6 +9,8 @@
 This enhances the standard path API with some extra functions. This API is intended to be a drop-in replacement;
 it merely calls through to the standard API where there is duplication.
 
+There is also a type Path, which is a kind of string. Path provides a similar set of methods to the helper functions.
+
 Please see the [GoDoc](https://godoc.org/github.com/rickb777/path) for more.
 
 ## Installation
