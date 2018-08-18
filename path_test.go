@@ -49,6 +49,13 @@ func TestDivideAndDropLeading(t *testing.T) {
 
 //-------------------------------------------------------------------------------------------------
 
+func isNil(t *testing.T, a, hint interface{}) {
+	t.Helper()
+	if a != nil {
+		t.Errorf("Got %#v; expected nil - for %v\n", a, hint)
+	}
+}
+
 func isEqual(t *testing.T, a, b, hint interface{}) {
 	t.Helper()
 	if !reflect.DeepEqual(a, b) {

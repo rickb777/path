@@ -3,6 +3,8 @@ package path
 import (
 	std "path"
 	"strings"
+	"fmt"
+	"database/sql/driver"
 )
 
 // Path is just a string with specialised methods.
@@ -142,5 +144,33 @@ func (p Path) Segments() []string {
 // String simply converts the type to a string.
 func (p Path) String() string {
 	return string(p)
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// Scan parses some value. It implements sql.Scanner,
+// https://golang.org/pkg/database/sql/#Scanner
+func (p *Path) Scan(value interface{}) error {
+	if value == nil {
+		*p = Path("")
+		return nil
+	}
+
+	switch value.(type) {
+	case string:
+		*p = Path(value.(string))
+	case []byte:
+		*p = Path(string(value.([]byte)))
+	case nil:
+	default:
+		return fmt.Errorf("Path.Scan(%#v)", value)
+	}
+	return nil
+}
+
+// Value converts the value to a string. It implements driver.Valuer,
+// https://golang.org/pkg/database/sql/driver/#Valuer
+func (p Path) Value() (driver.Value, error) {
+	return string(p), nil
 }
 

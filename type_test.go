@@ -91,3 +91,28 @@ func TestPathString(t *testing.T) {
 	a := Path("/a/b/c/zz.png").String()
 	isEqual(t, a, "/a/b/c/zz.png", "")
 }
+
+func TestPathScan(t *testing.T) {
+	a := new(Path)
+
+	err := a.Scan(nil)
+	isNil(t, err, "")
+	isEqual(t, *a, Path(""), "")
+
+	err = a.Scan("/a/b/c/zz.png")
+	isNil(t, err, "")
+	isEqual(t, *a, Path("/a/b/c/zz.png"), "")
+
+	err = a.Scan([]byte("/a/b/c/zz.png"))
+	isNil(t, err, "")
+	isEqual(t, *a, Path("/a/b/c/zz.png"), "")
+
+	err = a.Scan(123)
+	isEqual(t, err.Error(), "Path.Scan(123)", "")
+}
+
+func TestPathValue(t *testing.T) {
+	a, err := Path("/a/b/c/zz.png").Value()
+	isNil(t, err, "")
+	isEqual(t, a, "/a/b/c/zz.png", "")
+}
