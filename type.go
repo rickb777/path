@@ -43,8 +43,18 @@ func (p Path) Split() (dir Path, file string) {
 	return Path(d), f
 }
 
-// Append joins any number of path elements into a single path, adding a
-// separating slash if necessary. The result is Cleaned; in particular,
+// Prepend joins any number of path elements to the beginning of the path, adding a
+// separating slashes as necessary. The result is Cleaned; in particular,
+// all empty strings are ignored.
+func (p Path) Prepend(elem ...string) Path {
+	if !strings.HasPrefix(string(p), "/") {
+		p = "/" + p
+	}
+	return Path(std.Join(elem...)) + p
+}
+
+// Append joins any number of path elements to the end of the path, adding a
+// separating slashes as necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
 func (p Path) Append(elem ...string) Path {
 	if !strings.HasSuffix(string(p), "/") {
