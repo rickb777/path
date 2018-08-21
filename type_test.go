@@ -19,6 +19,12 @@ func TestPathSplit(t *testing.T) {
 	isEqual(t, b, "zz.png", "")
 }
 
+func TestPathOf(t *testing.T) {
+	isEqual(t, Of("", "cc", "d", "", "/e/", "x.png"), Path("cc/d/e/x.png"), "")
+	isEqual(t, Of("", "/cc", "d", "/e/", ""), Path("/cc/d/e"), "")
+	isEqual(t, Of(), Path(""), "")
+}
+
 func TestPathPrepend(t *testing.T) {
 	a := Path("a/b/xx.png").Prepend("", "/cc", "d", "")
 	isEqual(t, a, Path("/cc/d/a/b/xx.png"), "")

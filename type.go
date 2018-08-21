@@ -10,6 +10,36 @@ import (
 // Path is just a string with specialised methods.
 type Path string
 
+// Of joins any number of path elements to build a new path, adding a
+// separating slashes as necessary. The result is Cleaned; in particular,
+// all empty strings are ignored.
+//
+// If the first non-blank elem has a leading slash, the path will also
+// have a leading slash. It will not have a trailing slash.
+func Of(elem ...string) Path {
+	return Path(std.Join(elem...))
+}
+
+// Prepend joins any number of path elements to the beginning of the path, adding a
+// separating slashes as necessary. The result is Cleaned; in particular,
+// all empty strings are ignored.
+func (p Path) Prepend(elem ...string) Path {
+	if !strings.HasPrefix(string(p), "/") {
+		p = "/" + p
+	}
+	return Path(std.Join(elem...)) + p
+}
+
+// Append joins any number of path elements to the end of the path, adding a
+// separating slashes as necessary. The result is Cleaned; in particular,
+// all empty strings are ignored.
+func (p Path) Append(elem ...string) Path {
+	if !strings.HasSuffix(string(p), "/") {
+		p = p + "/"
+	}
+	return p + Path(std.Join(elem...))
+}
+
 // Clean returns the shortest path name equivalent to path
 // by purely lexical processing. It applies the following rules
 // iteratively until no further processing can be done:
@@ -41,26 +71,6 @@ func (p Path) Clean() Path {
 func (p Path) Split() (dir Path, file string) {
 	d, f := std.Split(string(p))
 	return Path(d), f
-}
-
-// Prepend joins any number of path elements to the beginning of the path, adding a
-// separating slashes as necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
-func (p Path) Prepend(elem ...string) Path {
-	if !strings.HasPrefix(string(p), "/") {
-		p = "/" + p
-	}
-	return Path(std.Join(elem...)) + p
-}
-
-// Append joins any number of path elements to the end of the path, adding a
-// separating slashes as necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
-func (p Path) Append(elem ...string) Path {
-	if !strings.HasSuffix(string(p), "/") {
-		p = p + "/"
-	}
-	return p + Path(std.Join(elem...))
 }
 
 // Ext returns the file name extension used by path.
