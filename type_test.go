@@ -36,18 +36,29 @@ func TestPathAppend(t *testing.T) {
 }
 
 func TestPathExt(t *testing.T) {
-	a := Path("/a/b/zz.png").Ext()
-	isEqual(t, a, ".png", "")
+	isEqual(t, Path("/a/b/zz.png").Ext(), ".png", "")
+	isEqual(t, Path("/a/b/zz").Ext(), "", "")
 }
 
 func TestPathBase(t *testing.T) {
-	a := Path("/a/b/zz.png").Base()
-	isEqual(t, a, "zz.png", "")
+	isEqual(t, Path("/a/b/zz.png").Base(), "zz.png", "")
 }
 
 func TestPathIsAbs(t *testing.T) {
-	a := Path("/a/b/zz.png").IsAbs()
-	isEqual(t, a, true, "")
+	isEqual(t, Path("/a/b/zz.png").IsAbs(), true, "")
+	isEqual(t, Path("a/b/zz.png").IsAbs(), false, "")
+}
+
+func TestPathHasPrefix(t *testing.T) {
+	isEqual(t, Path("/a/b/zz.png").HasPrefix("/a/b"), true, "")
+	isEqual(t, Path("/a/b/zz.png").HasPrefix("/a/b/"), true, "")
+	isEqual(t, Path("/a/b/zz.png").HasPrefix("/a/c/"), false, "")
+}
+
+func TestPathHasSuffix(t *testing.T) {
+	isEqual(t, Path("/a/b/zz.png").HasSuffix("/zz.png"), true, "")
+	isEqual(t, Path("/a/b/zz.png").HasSuffix("b/zz.png"), true, "")
+	isEqual(t, Path("/a/b/zz.png").HasSuffix("b/aa.png"), false, "")
 }
 
 func TestPathDir(t *testing.T) {

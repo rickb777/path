@@ -94,6 +94,16 @@ func (p Path) IsAbs() bool {
 	return std.IsAbs(string(p))
 }
 
+// HasPrefix reports whether the path starts with a particular prefix.
+func (p Path) HasPrefix(other Path) bool {
+	return strings.HasPrefix(string(p), string(other))
+}
+
+// HasSuffix reports whether the path ends with a particular suffix.
+func (p Path) HasSuffix(other Path) bool {
+	return strings.HasSuffix(string(p), string(other))
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element using Split, the path is Cleaned and trailing
 // slashes are removed.
