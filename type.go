@@ -20,6 +20,30 @@ func Of(elem ...string) Path {
 	return Path(std.Join(elem...))
 }
 
+// OfAny joins any number of path elements to build a new path, adding a
+// separating slashes as necessary. Each element is treated as either a
+// string, or a Path, or some other type; in the latter case, it is formatted
+// using fmt.Sprintf so the "%v" rules apply.
+//
+// The result is Cleaned; in particular, all empty strings are ignored.
+//
+// If the first non-blank elem has a leading slash, the path will also
+// have a leading slash. It will not have a trailing slash.
+func OfAny(elem ...interface{}) Path {
+	ss := make([]string, len(elem))
+	for i, v := range elem {
+		switch x := v.(type) {
+		case string:
+			ss[i] = x
+		case Path:
+			ss[i] = string(x)
+		default:
+			ss[i] = fmt.Sprintf("%v", v)
+		}
+	}
+	return Of(ss...)
+}
+
 // Prepend joins any number of path elements to the beginning of the path, adding a
 // separating slashes as necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
@@ -27,7 +51,8 @@ func (p Path) Prepend(elem ...string) Path {
 	if !strings.HasPrefix(string(p), "/") {
 		p = "/" + p
 	}
-	return Path(std.Join(elem...)) + p
+	q := Path(std.Join(elem...)) + p
+	return q.Clean()
 }
 
 // Append joins any number of path elements to the end of the path, adding a
@@ -37,7 +62,8 @@ func (p Path) Append(elem ...string) Path {
 	if !strings.HasSuffix(string(p), "/") {
 		p = p + "/"
 	}
-	return p + Path(std.Join(elem...))
+	q := p + Path(std.Join(elem...))
+	return q.Clean()
 }
 
 // Clean returns the shortest path name equivalent to path
@@ -158,8 +184,11 @@ func (p Path) IsEmpty() bool {
 // Segments returns the path split into the parts between slashes. Any leading or
 // trailing slash on the path is removed before the path is split, so there is no
 // leading or trailing blank string in the result.
+//
+// The root path "/" will return nil. A blank path will also return nil; this ensures
+// that the Segments of the zero value of Path is a zero value of []string.
 func (p Path) Segments() []string {
-	if p == "/" {
+	if p == "/" || p == "" {
 		return nil
 	}
 	if strings.HasPrefix(string(p), "/") {
@@ -203,4 +232,3 @@ func (p *Path) Scan(value interface{}) error {
 func (p Path) Value() (driver.Value, error) {
 	return string(p), nil
 }
-
