@@ -47,8 +47,15 @@ func TestPathExt(t *testing.T) {
 	isEqual(t, Path("/a/b/zz").Ext(), "", "")
 }
 
+func TestPathExtOnly(t *testing.T) {
+	isEqual(t, Path("/a/b/zz.png").ExtOnly(), "png", "")
+	isEqual(t, Path("/a/b/zz").ExtOnly(), "", "")
+}
+
 func TestPathBase(t *testing.T) {
 	isEqual(t, Path("/a/b/zz.png").Base(), "zz.png", "")
+	isEqual(t, Path("/a/b/zz").Base(), "zz", "")
+	isEqual(t, Path("").Base(), ".", "")
 }
 
 func TestPathIsAbs(t *testing.T) {

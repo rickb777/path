@@ -103,8 +103,24 @@ func (p Path) Split() (dir Path, file string) {
 // The extension is the suffix beginning at the final dot
 // in the final slash-separated element of path;
 // it is empty if there is no dot.
+//
+// Unlike ExtOnly, the dot is included in the result.
 func (p Path) Ext() string {
 	return std.Ext(string(p))
+}
+
+// ExtOnly returns the file name extension used by path.
+// The extension is the suffix beginning at the final dot
+// in the final slash-separated element of path;
+// it is empty if there is no dot.
+//
+// Unlike Ext, the dot is not included in the result.
+func (p Path) ExtOnly() string {
+	ext := std.Ext(string(p))
+	if ext == "" {
+		return ""
+	}
+	return ext[1:]
 }
 
 // Base returns the last element of path.
