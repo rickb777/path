@@ -1,8 +1,8 @@
 package path
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestDivideAndDropLeading(t *testing.T) {

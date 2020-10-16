@@ -118,4 +118,3 @@ func Match(pattern, name string) (matched bool, err error) {
 
 // ErrBadPattern indicates a globbing pattern was malformed.
 var ErrBadPattern = std.ErrBadPattern
-

@@ -1,10 +1,10 @@
 package path
 
 import (
+	"database/sql/driver"
+	"fmt"
 	std "path"
 	"strings"
-	"fmt"
-	"database/sql/driver"
 )
 
 // Path is just a string with specialised methods.
