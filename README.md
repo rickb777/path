@@ -1,7 +1,7 @@
 # path
 
 [![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg)](https://pkg.go.dev/github.com/rickb777/path)
-[![Build Status](https://travis-ci.org/rickb777/path.svg?branch=master)](https://travis-ci.org/rickb777/path)
+[![Build Status](https://travis-ci.org/rickb777/path.svg?branch=master)](https://travis-ci.org/rickb777/path/builds)
 [![Coverage Status](https://coveralls.io/repos/rickb777/path/badge.svg?branch=master&service=github)](https://coveralls.io/github/rickb777/path?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/path)](https://goreportcard.com/report/github.com/rickb777/path)
 [![Issues](https://img.shields.io/github/issues/rickb777/path.svg)](https://github.com/rickb777/path/issues)
