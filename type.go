@@ -17,7 +17,7 @@ type Path string
 // If the first non-blank elem has a leading slash, the path will also
 // have a leading slash. It will not have a trailing slash.
 func Of(elem ...string) Path {
-	return Path(std.Join(elem...))
+	return Path(std.Join(elem...)) // Join includes Clean
 }
 
 // OfAny joins any number of path elements to build a new path, adding a
@@ -47,22 +47,22 @@ func OfAny(elem ...interface{}) Path {
 // Prepend joins any number of path elements to the beginning of the path, adding a
 // separating slashes as necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (p Path) Prepend(elem ...string) Path {
-	if !strings.HasPrefix(string(p), "/") {
-		p = "/" + p
+func (path Path) Prepend(elem ...string) Path {
+	if !strings.HasPrefix(string(path), "/") {
+		path = "/" + path
 	}
-	q := Path(std.Join(elem...)) + p
+	q := Path(std.Join(elem...)) + path
 	return q.Clean()
 }
 
 // Append joins any number of path elements to the end of the path, adding a
 // separating slashes as necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (p Path) Append(elem ...string) Path {
-	if !strings.HasSuffix(string(p), "/") {
-		p = p + "/"
+func (path Path) Append(elem ...string) Path {
+	if !strings.HasSuffix(string(path), "/") {
+		path = path + "/"
 	}
-	q := p + Path(std.Join(elem...))
+	q := path + Path(std.Join(elem...))
 	return q.Clean()
 }
 
@@ -85,8 +85,8 @@ func (p Path) Append(elem ...string) Path {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (p Path) Clean() Path {
-	return Path(std.Clean(string(p)))
+func (path Path) Clean() Path {
+	return Path(std.Clean(string(path)))
 }
 
 // Split splits path immediately following the final slash,
@@ -94,9 +94,21 @@ func (p Path) Clean() Path {
 // If there is no slash in path, Split returns an empty dir and
 // file set to path.
 // The returned values have the property that path = dir+file.
-func (p Path) Split() (dir Path, file string) {
-	d, f := std.Split(string(p))
+func (path Path) Split() (dir Path, file string) {
+	d, f := std.Split(string(path))
 	return Path(d), f
+}
+
+// SplitExt splits the file name from its extension.
+// The extension is the suffix beginning at the final dot
+// in the final slash-separated element of path;
+// it is empty if there is no dot.
+// The dot is included in the extension.
+//
+// Everything prior to the last dot is returned as the first result.
+func (path Path) SplitExt() (Path, string) {
+	p, e := SplitExt(string(path))
+	return Path(p), e
 }
 
 // Ext returns the file name extension used by path.
@@ -105,8 +117,8 @@ func (p Path) Split() (dir Path, file string) {
 // it is empty if there is no dot.
 //
 // Unlike ExtOnly, the dot is included in the result.
-func (p Path) Ext() string {
-	return std.Ext(string(p))
+func (path Path) Ext() string {
+	return std.Ext(string(path))
 }
 
 // ExtOnly returns the file name extension used by path.
@@ -127,23 +139,23 @@ func (p Path) ExtOnly() string {
 // Trailing slashes are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of slashes, Base returns "/".
-func (p Path) Base() string {
-	return std.Base(string(p))
+func (path Path) Base() string {
+	return std.Base(string(path))
 }
 
 // IsAbs reports whether the path is absolute.
-func (p Path) IsAbs() bool {
-	return std.IsAbs(string(p))
+func (path Path) IsAbs() bool {
+	return std.IsAbs(string(path))
 }
 
 // HasPrefix reports whether the path starts with a particular prefix.
-func (p Path) HasPrefix(other Path) bool {
-	return strings.HasPrefix(string(p), string(other))
+func (path Path) HasPrefix(other Path) bool {
+	return strings.HasPrefix(string(path), string(other))
 }
 
 // HasSuffix reports whether the path ends with a particular suffix.
-func (p Path) HasSuffix(other Path) bool {
-	return strings.HasSuffix(string(p), string(other))
+func (path Path) HasSuffix(other Path) bool {
+	return strings.HasSuffix(string(path), string(other))
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -153,8 +165,8 @@ func (p Path) HasSuffix(other Path) bool {
 // If the path consists entirely of slashes followed by non-slash bytes, Dir
 // returns a single slash. In any other case, the returned path does not end in a
 // slash.
-func (p Path) Dir() Path {
-	return Path(std.Dir(string(p)))
+func (path Path) Dir() Path {
+	return Path(std.Dir(string(path)))
 }
 
 // Divide divides a path at the nth slash, not counting the leading slash
@@ -163,28 +175,28 @@ func (p Path) Dir() Path {
 // The resulting pair (head, tail) always satisfy
 //
 //   head + tail = path
-func (p Path) Divide(nth int) (Path, Path) {
-	head, tail := Divide(string(p), nth)
+func (path Path) Divide(nth int) (Path, Path) {
+	head, tail := Divide(string(path), nth)
 	return Path(head), Path(tail)
 }
 
 // Drop is a helper for Divide that returns the tail part only.
-func (p Path) Drop(unwanted int) Path {
-	_, tail := p.Divide(unwanted)
+func (path Path) Drop(unwanted int) Path {
+	_, tail := path.Divide(unwanted)
 	return tail
 }
 
 // Take is a helper for Divide that returns the head part only.
-func (p Path) Take(wanted int) Path {
-	head, _ := p.Divide(wanted)
+func (path Path) Take(wanted int) Path {
+	head, _ := path.Divide(wanted)
 	return head
 }
 
 // Next returns the first segment (without any leading '/') and the rest. It can
 // be used for iterating through the path segments; the end has been reached when
 // the tail is empty (see IsEmpty).
-func (p Path) Next() (string, Path) {
-	head, tail := p.Divide(1)
+func (path Path) Next() (string, Path) {
+	head, tail := path.Divide(1)
 	next := string(head)
 	if strings.HasPrefix(next, "/") {
 		next = next[1:]
@@ -193,8 +205,8 @@ func (p Path) Next() (string, Path) {
 }
 
 // IsEmpty returns true if the path is empty.
-func (p Path) IsEmpty() bool {
-	return len(p) == 0
+func (path Path) IsEmpty() bool {
+	return len(path) == 0
 }
 
 // Segments returns the path split into the parts between slashes. Any leading or
@@ -203,39 +215,39 @@ func (p Path) IsEmpty() bool {
 //
 // The root path "/" will return nil. A blank path will also return nil; this ensures
 // that the Segments of the zero value of Path is a zero value of []string.
-func (p Path) Segments() []string {
-	if p == "/" || p == "" {
+func (path Path) Segments() []string {
+	if path == "/" || path == "" {
 		return nil
 	}
-	if strings.HasPrefix(string(p), "/") {
-		p = p[1:]
+	if strings.HasPrefix(string(path), "/") {
+		path = path[1:]
 	}
-	if strings.HasSuffix(string(p), "/") {
-		p = p[:len(p)-1]
+	if strings.HasSuffix(string(path), "/") {
+		path = path[:len(path)-1]
 	}
-	return strings.Split(string(p), "/")
+	return strings.Split(string(path), "/")
 }
 
 // String simply converts the type to a string.
-func (p Path) String() string {
-	return string(p)
+func (path Path) String() string {
+	return string(path)
 }
 
 //-------------------------------------------------------------------------------------------------
 
 // Scan parses some value. It implements sql.Scanner,
 // https://golang.org/pkg/database/sql/#Scanner
-func (p *Path) Scan(value interface{}) error {
+func (path *Path) Scan(value interface{}) error {
 	if value == nil {
-		*p = Path("")
+		*path = Path("")
 		return nil
 	}
 
 	switch value.(type) {
 	case string:
-		*p = Path(value.(string))
+		*path = Path(value.(string))
 	case []byte:
-		*p = Path(string(value.([]byte)))
+		*path = Path(string(value.([]byte)))
 	case nil:
 	default:
 		return fmt.Errorf("Path.Scan(%#v)", value)
@@ -245,6 +257,6 @@ func (p *Path) Scan(value interface{}) error {
 
 // Value converts the value to a string. It implements driver.Valuer,
 // https://golang.org/pkg/database/sql/driver/#Valuer
-func (p Path) Value() (driver.Value, error) {
-	return string(p), nil
+func (path Path) Value() (driver.Value, error) {
+	return string(path), nil
 }

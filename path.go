@@ -47,3 +47,19 @@ func Take(path string, wanted int) string {
 	head, _ := Divide(path, wanted)
 	return head
 }
+
+// SplitExt splits the file name from its extension.
+// The extension is the suffix beginning at the final dot
+// in the final slash-separated element of path;
+// it is empty if there is no dot.
+// The dot is included in the extension.
+//
+// Everything prior to the last dot is returned as the first result.
+func SplitExt(path string) (string, string) {
+	for i := len(path) - 1; i >= 0 && path[i] != '/'; i-- {
+		if path[i] == '.' {
+			return path[:i], string(path[i:])
+		}
+	}
+	return path, ""
+}
