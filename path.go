@@ -58,7 +58,7 @@ func Take(path string, wanted int) string {
 func SplitExt(path string) (string, string) {
 	for i := len(path) - 1; i >= 0 && path[i] != '/'; i-- {
 		if path[i] == '.' {
-			return path[:i], string(path[i:])
+			return path[:i], path[i:]
 		}
 	}
 	return path, ""

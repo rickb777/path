@@ -127,8 +127,8 @@ func (path Path) Ext() string {
 // it is empty if there is no dot.
 //
 // Unlike Ext, the dot is not included in the result.
-func (p Path) ExtOnly() string {
-	ext := std.Ext(string(p))
+func (path Path) ExtOnly() string {
+	ext := std.Ext(string(path))
 	if ext == "" {
 		return ""
 	}
