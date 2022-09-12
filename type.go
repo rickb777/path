@@ -66,10 +66,10 @@ func (path Path) Append(elem ...string) Path {
 	return q.Clean()
 }
 
-// AppendPath joins a segment to the end of the path.
+// Join joins a segment to the end of the path.
 // It adds separating slashes as necessary.
 // The result is Cleaned; in particular, all empty strings are ignored.
-func (path Path) AppendPath(p2 Path) Path {
+func (path Path) Join(p2 Path) Path {
 	if !strings.HasSuffix(string(path), "/") {
 		path = path + "/"
 	}

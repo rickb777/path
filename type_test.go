@@ -42,11 +42,11 @@ func TestPathAppend(t *testing.T) {
 	isEqual(t, Path("/a/b").Append("", "/cc", "d", "xx.png", ""), Path("/a/b/cc/d/xx.png"), "")
 }
 
-func TestPathAppendPath(t *testing.T) {
-	isEqual(t, Path("/a/b").AppendPath("cc"), Path("/a/b/cc"), "")
-	isEqual(t, Path("/a/b/").AppendPath("cc"), Path("/a/b/cc"), "")
-	isEqual(t, Path("/a/b/").AppendPath("/cc"), Path("/a/b/cc"), "")
-	isEqual(t, Path("/a/b").AppendPath("/cc"), Path("/a/b/cc"), "")
+func TestPathJoin(t *testing.T) {
+	isEqual(t, Path("/a/b").Join("cc"), Path("/a/b/cc"), "")
+	isEqual(t, Path("/a/b/").Join("cc"), Path("/a/b/cc"), "")
+	isEqual(t, Path("/a/b/").Join("/cc"), Path("/a/b/cc"), "")
+	isEqual(t, Path("/a/b").Join("/cc"), Path("/a/b/cc"), "")
 }
 
 func TestPathSplitExt(t *testing.T) {
