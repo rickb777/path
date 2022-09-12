@@ -44,9 +44,9 @@ func OfAny(elem ...interface{}) Path {
 	return Of(ss...)
 }
 
-// Prepend joins any number of path elements to the beginning of the path, adding a
-// separating slashes as necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
+// Prepend joins some more segments to the beginning of the path.
+// It adds separating slashes as necessary.
+// The result is Cleaned; in particular, all empty strings are ignored.
 func (path Path) Prepend(elem ...string) Path {
 	if !strings.HasPrefix(string(path), "/") {
 		path = "/" + path
@@ -55,9 +55,9 @@ func (path Path) Prepend(elem ...string) Path {
 	return q.Clean()
 }
 
-// Append joins any number of path elements to the end of the path, adding a
-// separating slashes as necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
+// Append joins some more segments to the end of the path.
+// It adds separating slashes as necessary.
+// The result is Cleaned; in particular, all empty strings are ignored.
 func (path Path) Append(elem ...string) Path {
 	if !strings.HasSuffix(string(path), "/") {
 		path = path + "/"
@@ -66,24 +66,34 @@ func (path Path) Append(elem ...string) Path {
 	return q.Clean()
 }
 
+// AppendPath joins a segment to the end of the path.
+// It adds separating slashes as necessary.
+// The result is Cleaned; in particular, all empty strings are ignored.
+func (path Path) AppendPath(p2 Path) Path {
+	if !strings.HasSuffix(string(path), "/") {
+		path = path + "/"
+	}
+	return (path + p2).Clean()
+}
+
 // Clean returns the shortest path name equivalent to path
 // by purely lexical processing. It applies the following rules
 // iteratively until no further processing can be done:
 //
-//	1. Replace multiple slashes with a single slash.
-//	2. Eliminate each . path name element (the current directory).
-//	3. Eliminate each inner .. path name element (the parent directory)
-//	   along with the non-.. element that precedes it.
-//	4. Eliminate .. elements that begin a rooted path:
-//	   that is, replace "/.." by "/" at the beginning of a path.
+//  1. Replace multiple slashes with a single slash.
+//  2. Eliminate each . path name element (the current directory).
+//  3. Eliminate each inner .. path name element (the parent directory)
+//     along with the non-.. element that precedes it.
+//  4. Eliminate .. elements that begin a rooted path:
+//     that is, replace "/.." by "/" at the beginning of a path.
 //
 // The returned path ends in a slash only if it is the root "/".
 //
 // If the result of this process is an empty string, Clean
 // returns the string ".".
 //
-// See also Rob Pike, ``Lexical File Names in Plan 9 or
-// Getting Dot-Dot Right,''
+// See also Rob Pike, “Lexical File Names in Plan 9 or
+// Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
 func (path Path) Clean() Path {
 	return Path(std.Clean(string(path)))
@@ -174,7 +184,7 @@ func (path Path) Dir() Path {
 //
 // The resulting pair (head, tail) always satisfy
 //
-//   head + tail = path
+//	head + tail = path
 func (path Path) Divide(nth int) (Path, Path) {
 	head, tail := Divide(string(path), nth)
 	return Path(head), Path(tail)

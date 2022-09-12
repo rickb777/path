@@ -9,7 +9,7 @@ import (
 //
 // The resulting pair (head, tail) always satisfy
 //
-//   head + tail = path
+//	head + tail = path
 func Divide(path string, nth int) (string, string) {
 	if path == "" {
 		return "", ""

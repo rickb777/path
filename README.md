@@ -17,10 +17,6 @@ Please see the [GoDoc](https://godoc.org/github.com/rickb777/path) for more.
 
     go get -u github.com/rickb777/path
 
-or
-
-    dep ensure -add github.com/rickb777/path
-
 ## Status
 
 This library has been in reliable production use for some time. Versioning follows the well-known semantic version pattern.
