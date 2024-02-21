@@ -14,10 +14,6 @@ function v
   $@
 }
 
-if ! type -p goveralls; then
-  v go get github.com/mattn/goveralls
-fi
-
 if ! type -p shadow; then
   v go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
 fi
@@ -26,7 +22,6 @@ v gofmt -l -w *.go
 
 v go test -v -covermode=count -coverprofile=cover.out .
 v go tool cover -func=cover.out
-[ -z "$COVERALLS_TOKEN" ] || goveralls -coverprofile=cover.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 rm cover.out
 
 v go vet .
