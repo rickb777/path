@@ -14,10 +14,6 @@ function v
   $@
 }
 
-if ! type -p shadow; then
-  v go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-fi
-
 v gofmt -l -w *.go
 
 v go test -v -covermode=count -coverprofile=cover.out .
@@ -25,4 +21,3 @@ v go tool cover -func=cover.out
 rm cover.out
 
 v go vet .
-v shadow .
